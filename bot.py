@@ -90,7 +90,7 @@ async def req_accept(c, m):
         await Data.insert_one({'id': user_id})
     await c.approve_chat_join_request(chat_id, user_id)
     try:
-        await c.send_message(user_id, 𝐀𝐂𝐂𝐄𝐏𝐓𝐄𝐃_𝐓𝐄𝐗𝐓.format(user=m.from_user.mention, chat=m.chat.title))
+        await c.send_message(user_id, accepted_text.format(user=m.from_user.mention, chat=m.chat.title))
     except Exception as e:
         print(e)
 
