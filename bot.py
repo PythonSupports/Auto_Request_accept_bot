@@ -6,8 +6,8 @@ from os import environ as env
 import asyncio, datetime, time
 
 
-ACCEPTED_TEXT = "Hey {user}\n\nYour Request For {chat} Is Accepted ✅"
-START_TEXT = "Hai {}\n\nI am Auto Request Accept Bot Working For All Channels. Add Me In Your Channel To Use."
+ACCEPTED_TEXT = "𝐇𝐄𝐘 {user}\n\n𝐘our 𝐑𝐞𝐪𝐮𝐞𝐬𝐭 𝐅𝐨𝐫 {chat} 𝐈𝐬 𝐀𝐜𝐜𝐞𝐩𝐭𝐞𝐝 ✅"
+START_TEXT = "𝐇𝐚𝐢 {}\n\n𝐈 𝐚𝐦 𝐀𝐮𝐭𝐨 𝐑𝐞𝐪𝐮𝐞𝐬𝐭 𝐀𝐜𝐜𝐞𝐩𝐭 𝐁𝐨𝐭 𝐖𝐨𝐫𝐤𝐢𝐧𝐠 𝐅𝐨𝐫 𝐀𝐥𝐥 𝐂𝐡𝐚𝐧𝐧𝐞𝐥𝐬. 𝐀𝐝𝐝 𝐌𝐞 𝐈𝐧 𝐘𝐨𝐮𝐫 𝐂𝐡𝐚𝐧𝐧𝐞𝐥 𝐓𝐨 𝐔𝐬𝐞."
 
 # Environment variables for configuration
 API_ID = int(env.get('API_ID'))
@@ -30,8 +30,8 @@ async def start_handler(c, m):
     if not await Data.find_one({'id': user_id}):
         await Data.insert_one({'id': user_id})
     button = [[        
-        InlineKeyboardButton('Updates', url='https://t.me/mkn_bots_updates'),
-        InlineKeyboardButton('Support', url='https://t.me/MKN_BOTZ_DISCUSSION_GROUP')
+        InlineKeyboardButton('𝐔𝐩𝐝𝐚𝐭𝐞𝐬🪐, url='https://t.me/krishnetwork'),
+        InlineKeyboardButton('𝐒𝐮𝐩𝐩𝐨𝐫𝐭💗, url='https://t.me/krishsupport')
     ]]
     return await m.reply_text(
         text=START_TEXT.format(m.from_user.mention),
@@ -39,17 +39,17 @@ async def start_handler(c, m):
         reply_markup=InlineKeyboardMarkup(button)
     )
 
-@Bot.on_message(filters.command(["broadcast", "users"]) & filters.user(ADMINS))  
+@Bot.on_message(filters.command(["𝐛𝐫𝐨𝐚𝐝𝐜𝐚𝐬𝐭", "users"]) & filters.user(𝐀𝐃𝐌𝐈𝐍𝐒))  
 async def broadcast(c, m):
     if m.text == "/users":
         total_users = await Data.count_documents({})
         return await m.reply(f"Total Users: {total_users}")
 
     b_msg = m.reply_to_message
-    sts = await m.reply_text("Broadcasting your messages...")
+    sts = await m.reply_text("𝐁𝐫𝐨𝐚𝐝𝐜𝐚𝐬𝐭𝐢𝐧𝐠 𝐲𝐨𝐮𝐫 𝐦𝐞𝐬𝐬𝐚𝐠𝐞𝐬...")
     users = Data.find({})
     total_users = await Data.count_documents({})
-    done, failed, success = 0, 0, 0
+    𝐝𝐨𝐧𝐞, 𝐟𝐚𝐢𝐥𝐞𝐝, success = 0, 0, 0
     start_time = time.time()
 
     async for user in users:
@@ -72,8 +72,8 @@ async def broadcast(c, m):
         except Exception:
             failed += 1
         done += 1
-        if not done % 20:
-            await sts.edit(f"Broadcast in progress:\n\nTotal Users {total_users}\nCompleted: {done} / {total_users}\nSuccess: {success}\nFailed: {failed}")
+        if not 𝐬𝐮𝐜𝐜𝐞𝐬𝐬20:
+            await sts.edit(f"𝐁𝐫𝐨𝐚𝐝𝐜𝐚𝐬𝐭 𝐢𝐧 𝐩𝐫𝐨𝐠𝐫𝐞𝐬𝐬:\n\nTotal 𝐔𝐬𝐞𝐫𝐬 {total_users}\𝐧𝐂𝐨𝐦𝐩𝐥𝐞𝐭𝐞𝐝: {done} / {total_users}\nSuccess: {success}\nFailed: {failed}")
 
     time_taken = datetime.timedelta(seconds=int(time.time() - start_time))
     await sts.delete()
@@ -90,7 +90,7 @@ async def req_accept(c, m):
         await Data.insert_one({'id': user_id})
     await c.approve_chat_join_request(chat_id, user_id)
     try:
-        await c.send_message(user_id, ACCEPTED_TEXT.format(user=m.from_user.mention, chat=m.chat.title))
+        await c.send_message(user_id, 𝐀𝐂𝐂𝐄𝐏𝐓𝐄𝐃_𝐓𝐄𝐗𝐓.format(user=m.from_user.mention, chat=m.chat.title))
     except Exception as e:
         print(e)
 
