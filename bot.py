@@ -30,8 +30,8 @@ async def start_handler(c, m):
     if not await Data.find_one({'id': user_id}):
         await Data.insert_one({'id': user_id})
     button = [[        
-        InlineKeyboardButton('𝐔𝐩𝐝𝐚𝐭𝐞𝐬🪐, url='https://t.me/krishnetwork'),
-        InlineKeyboardButton('𝐒𝐮𝐩𝐩𝐨𝐫𝐭💗, url='https://t.me/krishsupport')
+        InlineKeyboardButton('𝐔𝐩𝐝𝐚𝐭𝐞𝐬🪐, url=' https://t.me/krishnetwork '),
+        InlineKeyboardButton('𝐒𝐮𝐩𝐩𝐨𝐫𝐭💗, url=' https://t.me/krishsupport ')
     ]]
     return await m.reply_text(
         text=START_TEXT.format(m.from_user.mention),
