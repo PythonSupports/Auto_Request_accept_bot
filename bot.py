@@ -25,7 +25,7 @@ async def start(client: pr0fess0r_99, message: Message):
             InlineKeyboardButton("𝚂𝚄𝙿𝙿𝙾𝚁𝚃", url="https://t.me/krishnetwork")
         ],
         [
-            InlineKeyboardButton("𝚂𝚄𝙱𝚂𝙲𝚁𝙸𝙱𝙴", url="https://youtube.com/channel/xkrishmishra")
+            InlineKeyboardButton("𝚂𝚄𝙱𝚂𝙲𝚁𝙸𝙱𝙴", url="https://www.youtube.com/@Coderkrishsupport")
         ]
     ]
     
