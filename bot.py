@@ -41,19 +41,23 @@ async def start(client: pr0fess0r_99, message: Message):
 async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
     chat = message.chat  # Get chat information
     user = message.from_user  # Get user who requested to join
-    
+
+    # Debugging information
+    print(f"Chat ID: {chat.id}, User: {user.first_name} ({user.id})")
+
     # Log user joining
     print(f"{user.first_name} 𝙹𝙾𝙸𝙽𝙴𝙳 ⚡")
 
     # Approve chat join request
     await client.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
-    
+
     # Send welcome message if approval is enabled
     if APPROVED == "on":
         await client.send_message(
             chat_id=chat.id, 
             text=TEXT.format(mention=user.mention, title=chat.title)
         )
+
 
 # Start the bot
 print("𝗕𝗼𝘁 𝗦𝘁𝗮𝗿𝘁𝗲𝗱 𝗣𝗹𝗲𝗮𝘀𝗲 𝗦𝘂𝗯𝘀𝗰𝗿𝗶𝗯𝗲 𝗰𝗼𝗱𝗲𝗿 𝗸𝗿𝗶𝘀𝗵 𝘀𝘂𝗽𝗽𝗼𝗿𝘁")
