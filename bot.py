@@ -1,6 +1,15 @@
-import os
-from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, ChatJoinRequest
+# bot.py
+import logging
+from telegram import Update, InputFile
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    ContextTypes,
+    ChatJoinRequestHandler,
+)
+import pymongo
+import requests
+from config import BOT_TOKEN, OWNER_ID, MONGO_URI
 
 # Set up logging
 logging.basicConfig(
