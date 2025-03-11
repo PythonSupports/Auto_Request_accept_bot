@@ -2,63 +2,109 @@ import os
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, ChatJoinRequest
 
-# Initialize bot with environment variables
-pr0fess0r_99 = Client(
-    "𝗕𝗼𝘁 𝗦𝘁𝗮𝗿𝘁𝗲𝗱 𝗣𝗹𝗲𝗮𝘀𝗲 𝗦𝘂𝗯𝘀𝗰𝗿𝗶𝗯𝗲 𝗖𝗼𝗱𝗲𝗿 𝗸𝗿𝗶𝘀𝗵 𝘀𝘂𝗽𝗽𝗼𝗿𝘁",
-    bot_token=os.environ["BOT_TOKEN"],
-    api_id=int(os.environ["API_ID"]),
-    api_hash=os.environ["API_HASH"]
+# Set up logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
 )
+logger = logging.getLogger(__name__)
 
-# Environment variables for chat ID and custom messages
-CHAT_ID = int(os.environ.get("CHAT_ID", 0))
-TEXT = os.environ.get("APPROVED_WELCOME_TEXT", "Hello {mention}\nWelcome to {title}\n\nYou have been auto-approved!")
-APPROVED = os.environ.get("APPROVED_WELCOME", "on").lower()
+# MongoDB setup
+client = pymongo.MongoClient(MONGO_URI)
+db = client['telegram_bot']
+accepted_collection = db['accepted_members']
 
-# Handle the `/start` command
-@pr0fess0r_99.on_message(filters.private & filters.command(["start"]))
-async def start(client: pr0fess0r_99, message: Message):
-    # Define buttons for user interaction
-    buttons = [
-        [
-            InlineKeyboardButton("𝚄𝙿𝙳𝙰𝚃𝙴𝚉", url="https://t.me/Krishnetwork"),
-            InlineKeyboardButton("𝚂𝚄𝙿𝙿𝙾𝚁𝚃", url="https://t.me/krishnetwork")
-        ],
-        [
-            InlineKeyboardButton("𝚂𝚄𝙱𝚂𝙲𝚁𝙸𝙱𝙴", url="https://www.youtube.com/@Coderkrishsupport")
-        ]
-    ]
-    
-    # Reply with welcome text and buttons
-    await message.reply_text(
-        text="**𝙷𝙴𝙻𝙻𝙾...⚡\n\n𝙸𝙰𝙼 𝙰 𝚂𝙸𝙼𝙿𝙻𝙴 𝚃𝙴𝙻𝙴𝙶𝚁𝙰𝙼 𝙰𝚄𝚃𝙾 𝚁𝙴𝚀𝚄𝙴𝚂𝚃 𝙰𝙲𝙲𝙴𝙿𝚃 𝙱𝙾𝚃.\n𝙵𝙾𝚁 𝚈𝙾𝚄𝚁 𝙲𝙷𝙰𝚃𝚂 𝙲𝚁𝙴𝙰𝚃𝙴 𝙾𝙽𝙴 𝙱𝙾𝚃... \n𝚅𝙸𝙳𝙴𝙾 𝙾𝙽 𝙼𝚈 𝚈𝙾𝚄𝚃𝚄𝙱𝙴 𝙲𝙷𝙰𝙽𝙽𝙴𝙻**",
-        reply_markup=InlineKeyboardMarkup(buttons),
-        disable_web_page_preview=True
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Sends a start message with a welcome text, video, and bot invite link."""
+    chat_id = update.message.chat_id
+    start_text = (
+        "**Hello! Welcome to the Auto Accept Bot.**\n\n"
+        "✅ I automatically approve join requests for groups & channels.\n"
+        "✅ I send a DM to notify the user upon approval.\n"
+        "✅ The owner can use `/broadcast` to send messages to all accepted members.\n\n"
+        "📌 **Add me to your group/channel:** [Click Here](https://t.me/YourBotUsername?startgroup=true)"
     )
+    
+    # Send the start message
+    await update.message.reply_text(start_text, parse_mode="Markdown", disable_web_page_preview=True)
 
-# Handle new chat join requests
-@pr0fess0r_99.on_chat_join_request(filters.chat(CHAT_ID))
-async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
-    chat = message.chat  # Get chat information
-    user = message.from_user  # Get user who requested to join
+    # Download the video and send it
+    video_url = "https://files.catbox.moe/1cz1po.mp4"
+    video_path = "start_video.mp4"
 
-    # Debugging information
-    print(f"Chat ID: {chat.id}, User: {user.first_name} ({user.id})")
+    try:
+        response = requests.get(video_url, stream=True)
+        if response.status_code == 200:
+            with open(video_path, "wb") as video_file:
+                for chunk in response.iter_content(chunk_size=1024):
+                    video_file.write(chunk)
+            await context.bot.send_video(chat_id=chat_id, video=InputFile(video_path))
+    except Exception as e:
+        logger.error(f"Failed to send start video: {e}")
 
-    # Log user joining
-    print(f"{user.first_name} 𝙹𝙾𝙸𝙽𝙴𝙳 ⚡")
+async def handle_chat_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handles join requests, approves them, and notifies the user."""
+    join_request = update.chat_join_request
+    if join_request:
+        chat_id = join_request.chat.id
+        user_id = join_request.from_user.id
+        username = join_request.from_user.username or join_request.from_user.full_name
 
-    # Approve chat join request
-    await client.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
+        try:
+            await context.bot.approve_chat_join_request(chat_id, user_id)
+            logger.info(f"Approved join request for {username} in chat {chat_id}")
 
-    # Send welcome message if approval is enabled
-    if APPROVED == "on":
-        await client.send_message(
-            chat_id=chat.id, 
-            text=TEXT.format(mention=user.mention, title=chat.title)
-        )
+            chat_type = join_request.chat.type
+            message_text = "Your request has been accepted!"
+            if chat_type in ["group", "supergroup"]:
+                message_text = "Your **group** request has been accepted!"
+            elif chat_type == "channel":
+                message_text = "Your **channel** request has been accepted!"
 
+            try:
+                await context.bot.send_message(chat_id=user_id, text=message_text, parse_mode="Markdown")
+            except Exception as e:
+                logger.error(f"Failed to send DM to {username}: {e}")
 
-# Start the bot
-print("𝗕𝗼𝘁 𝗦𝘁𝗮𝗿𝘁𝗲𝗱 𝗣𝗹𝗲𝗮𝘀𝗲 𝗦𝘂𝗯𝘀𝗰𝗿𝗶𝗯𝗲 𝗰𝗼𝗱𝗲𝗿 𝗸𝗿𝗶𝘀𝗵 𝘀𝘂𝗽𝗽𝗼𝗿𝘁")
-pr0fess0r_99.run()
+            accepted_collection.update_one(
+                {"chat_id": chat_id, "user_id": user_id},
+                {"$set": {"username": username}},
+                upsert=True
+            )
+        except Exception as e:
+            logger.error(f"Error processing join request for {username}: {e}")
+
+async def broadcast_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Allows the owner to send a broadcast message to all accepted members."""
+    user_id = update.effective_user.id
+    if user_id != OWNER_ID:
+        await update.message.reply_text("You are not authorized to use this command.")
+        return
+
+    if context.args:
+        broadcast_text = " ".join(context.args)
+    else:
+        await update.message.reply_text("Please provide a message to broadcast.")
+        return
+
+    accepted_members = accepted_collection.find()
+    count = 0
+    for member in accepted_members:
+        try:
+            await context.bot.send_message(chat_id=member["user_id"], text=broadcast_text)
+            count += 1
+        except Exception as e:
+            logger.error(f"Failed to send message to {member.get('username', 'unknown')} ({member['user_id']}): {e}")
+
+    await update.message.reply_text(f"Broadcast message sent to {count} members.")
+
+def main():
+    application = Application.builder().token(BOT_TOKEN).build()
+
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(ChatJoinRequestHandler(handle_chat_join_request))
+    application.add_handler(CommandHandler("broadcast", broadcast_command))
+
+    application.run_polling()
+
+if __name__ == '__main__':
+    main()
