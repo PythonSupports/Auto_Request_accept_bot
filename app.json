@@ -1,15 +1,3 @@
-{
-    "name": "Auto-ReqAccept-Bot",
-    "description": "This Is A Telegram For Automatically Accept Chat Join Request With Broadcast &amp; Users Database Feature",
-    "keywords": ["telegram", "AutoRequestAccept", "Bot"],
-    "repository": "https://github.com/xkrishmishra/Auto_Request_accept_bot",
-    "env": {
-        "API_ID": {"description": "Goto https://my.telegram.org To Obtain This."},
-        "API_HASH": {"description": "Goto https://my.telegram.org To Obtain This"},
-        "API_HASH": {"description": "Goto https://my.telegram.org To Obtain This"},
-        "BOT_TOKEN": {"description": "Get The Bot Token From https://telegram.dog/BotFather"},
-        "ADMINS": {"description": "Your Telegram ID form @Tgraph_Multi_Bot click /id in this bot"},
-        "DB_URL": {"description": "MongoDB URI For https://mongodb.com"}
-    },
-    "buildpacks": [{"url": "heroku/python"}]
-}
+heroku config:set BOT_TOKEN=your_bot_token
+heroku config:set OWNER_ID=your_owner_id
+heroku config:set MONGO_URI=your_mongo_uri
