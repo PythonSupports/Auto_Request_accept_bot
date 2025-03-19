@@ -29,18 +29,18 @@ async def start(client: pr0fess0r_99, message: Message):
         ]
     ]
     
-    # Reply with welcome text and buttons
-    await message.reply_text(
-        text="**𝙷𝙴𝙻𝙻𝙾...⚡\n\n𝙸𝙰𝙼 𝙰 𝚂𝙸𝙼𝙿𝙻𝙴 𝚃𝙴𝙻𝙴𝙶𝚁𝙰𝙼 𝙰𝚄𝚃𝙾 𝚁𝙴𝚀𝚄𝙴𝚂𝚃 𝙰𝙲𝙲𝙴𝙿𝚃 𝙱𝙾𝚃.\n𝙵𝙾𝚁 𝚈𝙾𝚄𝚁 𝙲𝙷𝙰𝚃𝚂 𝙲𝚁𝙴𝙰𝚃𝙴 𝙾𝙽𝙴 𝙱𝙾𝚃... \n𝚅𝙸𝙳𝙴𝙾 𝙾𝙽 𝙼𝚈 𝚈𝙾𝚄𝚃𝚄𝙱𝙴 𝙲𝙷𝙰𝙽𝙽𝙴𝙻**",
-        reply_markup=InlineKeyboardMarkup(buttons),
-        disable_web_page_preview=True
+    # Send start video
+    await message.reply_video(
+        video="https://files.catbox.moe/81j930.mp4",
+        caption="**𝙷𝙴𝙻𝙻𝙾...⚡\n\n𝙸𝙰𝙼 𝙰 𝚂𝙸𝙼𝙿𝙻𝙴 𝚃𝙴𝙻𝙴𝙶𝚁𝙰𝙼 𝙰𝚄𝚃𝙾 𝚁𝙴𝚀𝚄𝙴𝚂𝚃 𝙰𝙲𝙲𝙴𝙿𝚃 𝙱𝙾𝚃.\n𝙵𝙾𝚁 𝚈𝙾𝚄𝚁 𝙲𝙷𝙰𝚃𝚂 𝙲𝚁𝙴𝙰𝚃𝙴 𝙾𝙽𝙴 𝙱𝙾𝚃... \n𝚅𝙸𝙳𝙴𝙾 𝙾𝙽 𝙼𝚈 𝚈𝙾𝚄𝚃𝚄𝙱𝙴 𝙲𝙷𝙰𝙽𝙽𝙴𝙻**",
+        reply_markup=InlineKeyboardMarkup(buttons)
     )
 
-# Handle new chat join requests
-@pr0fess0r_99.on_chat_join_request(filters.chat(CHAT_ID))
-async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
-    chat = message.chat  # Get chat information
-    user = message.from_user  # Get user who requested to join
+# Handle new chat join requests (groups + channels)
+@pr0fess0r_99.on_chat_join_request()
+async def autoapprove(client: pr0fess0r_99, request: ChatJoinRequest):
+    chat = request.chat  # Get chat info (group or channel)
+    user = request.from_user  # Get user requesting to join
 
     # Debugging information
     print(f"Chat ID: {chat.id}, User: {user.first_name} ({user.id})")
@@ -48,16 +48,15 @@ async def autoapprove(client: pr0fess0r_99, message: ChatJoinRequest):
     # Log user joining
     print(f"{user.first_name} 𝙹𝙾𝙸𝙽𝙴𝙳 ⚡")
 
-    # Approve chat join request
+    # Auto-approve the request
     await client.approve_chat_join_request(chat_id=chat.id, user_id=user.id)
 
-    # Send welcome message if approval is enabled
+    # Send welcome message if enabled
     if APPROVED == "on":
         await client.send_message(
-            chat_id=chat.id, 
+            chat_id=chat.id,
             text=TEXT.format(mention=user.mention, title=chat.title)
         )
-
 
 # Start the bot
 print("𝗕𝗼𝘁 𝗦𝘁𝗮𝗿𝘁𝗲𝗱 𝗣𝗹𝗲𝗮𝘀𝗲 𝗦𝘂𝗯𝘀𝗰𝗿𝗶𝗯𝗲 𝗰𝗼𝗱𝗲𝗿 𝗸𝗿𝗶𝘀𝗵 𝘀𝘂𝗽𝗽𝗼𝗿𝘁")
