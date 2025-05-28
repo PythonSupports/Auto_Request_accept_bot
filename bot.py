@@ -33,7 +33,7 @@ async def start(_, message: Message):
         ]
     ]
     await message.reply_video(
-        video="https://files.catbox.moe/81j930.mp4",
+        video="https://files.catbox.moe/glnmnh.mp4",
         caption="**👋 Hello!\n\nI’m a Telegram Auto Request Accept Bot.**\n\n"
                 "➤ Add me to your group/channel and enable join requests.\n"
                 "➤ I’ll auto-approve new members and optionally DM them a welcome message.\n\n"
